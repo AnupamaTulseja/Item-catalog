@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title>Item Catalog</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+      <script type="text/javascript" src="https://apis.google.com/js/client:platform.js?onload=start"></script>
+</head>
+
+<body>
+      <div>
+         <div>
+            <a href="/">Catalog</a>
+         </div>
+         <div>
+           <ul>
+             {% if user==None %}
+             <li><div id="signinButton">
+               <span class="g-signin"
+                 data-scope="openid"
+                 data-clientid="970941246035-fa79ehlv70nmf1g72vro1grlcn532pqj.apps.googleusercontent.com"
+                 data-redirecturi="catalog"
+                 data-accesstype="offline"
+                 data-cookiepolicy="single_host_origin"
+                 data-callback="signInCallback"
+                 data-approvalprompt="force">
+               </span>
+             </div></li>
+             {% else %}
+               <li><a href="">Logged in as: {{ user }}</a></li>
+               <li><a href="{{ url_for('gdisconnect') }}">Sign out</a></li>
+             {% endif %}
+           </ul>
+         </div>
+      </div>
+   </nav>
+   <div>
+  <div>Are you sure you want to delete <b> {{categoryItem.name}}</b>?</div>
+  <form action="{{ url_for('deleteCategoryItem', catalog_id = categoryItem.category_id ,item_id = categoryItem.id)}}" method='post'>
+    <input type="submit" value='Confirm Deletion'>
+  </form>
+</div>
+</body>
+</html>
