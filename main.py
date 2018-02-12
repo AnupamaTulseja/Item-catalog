@@ -44,6 +44,8 @@ def login():
 @app.route('/catalog', methods=['GET', 'POST'])
 def baseDisplay():
     try:
+        print 'lll'
+        print login_session
         user = login_session['username']
     except KeyError:
         user = None
@@ -53,6 +55,7 @@ def baseDisplay():
         login_session['state'] = STATE
         categories = session.query(Category).all()
         categoryItems = session.query(CategoryItem).all()
+        print 'rendering'
         return render_template('base.html', categories = categories, categoryItems = categoryItems, user=user, STATE=STATE)
     else:
         print ("Starting authentication")
@@ -122,6 +125,7 @@ def baseDisplay():
         login_session['username'] = data['name']
 
         flash("you are now logged in as %s" % login_session['username'])
+        print 'Redirecting'
         return redirect(url_for('baseDisplay'))
 
 
@@ -177,21 +181,20 @@ def editCategoryItem(catalog_id, item_id):
 
     if 'username' not in login_session:
         return redirect(url_for('login'))
-    editedItem = session.query(CategoryItem).filter_by(id=item_id).first()
-    category = session.query(Category).filter_by(id=editedItem.category_id).one()
+    categoryItem = session.query(CategoryItem).filter_by(id=item_id).first()
     categories = session.query(Category).all()
     if request.method == 'POST':
         if request.form['name']:
-            editedItem.name = request.form['name']
+            categoryItem.name = request.form['name']
         if request.form['description']:
-            editedItem.description = request.form['description']
+            categoryItem.description = request.form['description']
         if request.form['category_id']:
-            editedItem.category_id = request.form['category_id']
-        session.add(editedItem)
+            categoryItem.category_id = request.form['category_id']
+        session.add(categoryItem)
         session.commit()
         return redirect(url_for('baseDisplay'))
     else:
-        return render_template('editItem.html', item=editedItem, category=category, categories=categories)
+        return render_template('editItem.html', categories=categories, categoryItem=categoryItem)
 
 @app.route('/catalog/<int:catalog_id>/items/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteCategoryItem(catalog_id, item_id):
@@ -200,7 +203,7 @@ def deleteCategoryItem(catalog_id, item_id):
         return redirect(url_for('login'))
 
 
-    deletedItem = session.query(CategoryItem).filter_by(id = item_id).first()
+    categoryItem = session.query(CategoryItem).filter_by(id = item_id).first()
 
     if request.method == 'POST':
         session.delete(deletedItem)
@@ -235,6 +238,7 @@ def gdisconnect():
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+
 
 if __name__ == '__main__':
     app.debug = True
